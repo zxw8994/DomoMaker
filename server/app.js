@@ -55,7 +55,7 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   cookie: {
-    httpOnly: true,  
+    httpOnly: true,
   },
 }));
 app.engine('handlebars', expressHandlebars({ defaultLayout: 'main' }));
@@ -66,11 +66,11 @@ app.use(cookieParser());
 
 // csrf must come AFTER app.use(cookieParser())
 app.use(csrf());
-app.use((err,req,res,next) => {
-   if (err.code !== 'EBADCSRFTOKEN') return next(err);
-    
-    console.log('Missing CSRF token');
-    return false;
+app.use((err, req, res, next) => {
+  if (err.code !== 'EBADCSRFTOKEN') return next(err);
+
+  console.log('Missing CSRF token');
+  return false;
 });
 
 router(app);
