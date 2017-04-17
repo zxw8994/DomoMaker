@@ -10,7 +10,8 @@ var handleDomo = function handleDomo(e) {
 
     $("#domoMessage").animate({ width: 'hide' }, 350);
 
-    if ($("#domoName").val() == '' || $("#domoAge").val() == '') {
+    // NEWLY ADDED || $("#domoJob").val() == ''
+    if ($("#domoName").val() == '' || $("#domoAge").val() == '' || $("#domoJob").val() == '') {
         handleError("RAWR! All fields are required");
         return false;
     }
@@ -44,10 +45,17 @@ var renderDomo = function renderDomo() {
             "Age: "
         ),
         React.createElement("input", { id: "domoAge", type: "text", name: "age", placeholder: "Domo Age" }),
+        React.createElement(
+            "label",
+            { htmlFor: "job" },
+            "Age: "
+        ),
+        React.createElement("input", { id: "domoJob", type: "text", name: "job", placeholder: "Domo Job" }),
         React.createElement("input", { type: "hidden", name: "_csrf", value: this.props.csrf }),
         React.createElement("input", { className: "makeDomoSubmit", type: "submit", value: "Make Domo" })
     );
-};
+}; // NEWLY ADDED PLUS ^
+
 
 var renderDomoList = function renderDomoList() {
     if (this.state.data.length === 0) {
@@ -63,26 +71,45 @@ var renderDomoList = function renderDomoList() {
     }
 
     var domoNodes = this.state.data.map(function (domo) {
-        return React.createElement(
-            "div",
-            { key: domo._id, className: "domo" },
-            React.createElement("img", { src: "/assets/img/domoface.jpeg", alt: "domo face", className: "domoFace" }),
+        return (
+            //<div key={domo._id} className="domo" method="POST">
             React.createElement(
-                "h3",
-                { className: "domoName" },
-                " Name: ",
-                domo.name,
-                " "
-            ),
-            React.createElement(
-                "h3",
-                { className: "domoAge" },
-                " Age: ",
-                domo.age,
-                " "
+                "div",
+                { key: domo._id, className: "domo" },
+                React.createElement("img", { src: "/assets/img/domoface.jpeg", alt: "domo face", className: "domoFace" }),
+                React.createElement(
+                    "h3",
+                    { className: "domoName" },
+                    " Name: ",
+                    domo.name,
+                    " "
+                ),
+                React.createElement(
+                    "h3",
+                    { className: "domoAge" },
+                    " Age: ",
+                    domo.age,
+                    " "
+                ),
+                React.createElement(
+                    "h3",
+                    { className: "domoJob" },
+                    " Job: ",
+                    domo.job,
+                    " "
+                ),
+                React.createElement(
+                    "h3",
+                    { className: "domoLevel" },
+                    " Level: ",
+                    domo.level = 1,
+                    " "
+                ),
+                React.createElement("input", { type: "hidden", name: "_id", value: domo._id }),
+                React.createElement("input", { className: "makeDomoLevel", type: "submit", value: "Level-Up Domo" })
             )
         );
-    });
+    }); // NEWLY ADDED ^ className="domoJob">  className="domoLevel"> Pt1.
 
     return React.createElement(
         "div",
