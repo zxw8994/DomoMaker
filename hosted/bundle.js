@@ -1,151 +1,200 @@
 "use strict";
 
-var domoRenderer = void 0; // Domo Renderer component
-var domoForm = void 0; // Domo Add Form Render Component
-var DomoFormClass = void 0; // Domo Form React UI class
-var DomoListClass = void 0; // Domo List React UI class
+var characterRenderer = void 0; // Domo Renderer component
+var characterForm = void 0; // Domo Add Form Render Component
+var CharacterFormClass = void 0; // Domo Form React UI class
+var CharacterListClass = void 0; // Domo List React UI class
 
-var handleDomo = function handleDomo(e) {
+var handleCharacter = function handleCharacter(e) {
     e.preventDefault();
 
-    $("#domoMessage").animate({ width: 'hide' }, 350);
+    //$("#domoMessage").animate({width:'hide'},350);
 
     // NEWLY ADDED || $("#domoJob").val() == ''
-    if ($("#domoName").val() == '' || $("#domoAge").val() == '' || $("#domoJob").val() == '') {
-        handleError("RAWR! All fields are required");
+    if ($("#domoName").val() == '' || $("#domoJob").val() == '') {
+        handleError("All fields are required");
         return false;
     }
 
-    sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
-        domoRenderer.loadDomosFromServer();
+    sendAjax('POST', $("#characterForm").attr("action"), $("#characterForm").serialize(), function () {
+        characterRenderer.loadCharactersFromServer();
     });
 
     return false;
 };
 
-var renderDomo = function renderDomo() {
+var renderCharacter = function renderCharacter() {
     return React.createElement(
         "form",
-        { id: "domoForm",
+        { id: "characterForm",
             onSubmit: this.handleSubmit,
-            name: "domoForm",
+            name: "characterForm",
             action: "/maker",
             method: "POST",
-            className: "domoForm"
+            className: "characterForm"
         },
         React.createElement(
             "label",
             { htmlFor: "name" },
             "Name: "
         ),
-        React.createElement("input", { id: "domoName", type: "text", name: "name", placeholder: "Domo Name" }),
-        React.createElement(
-            "label",
-            { htmlFor: "age" },
-            "Age: "
-        ),
-        React.createElement("input", { id: "domoAge", type: "text", name: "age", placeholder: "Domo Age" }),
+        React.createElement("input", { id: "characterName", type: "text", name: "name", placeholder: "Character Name" }),
         React.createElement(
             "label",
             { htmlFor: "job" },
-            "Age: "
+            "Job: "
         ),
-        React.createElement("input", { id: "domoJob", type: "text", name: "job", placeholder: "Domo Job" }),
+        React.createElement(
+            "select",
+            { id: "characterJob", name: "job" },
+            React.createElement(
+                "option",
+                { value: "Barbarian" },
+                "Barbarian"
+            ),
+            React.createElement(
+                "option",
+                { value: "Bard" },
+                "Bard"
+            ),
+            React.createElement(
+                "option",
+                { value: "Cleric" },
+                "Cleric"
+            ),
+            React.createElement(
+                "option",
+                { value: "Druid" },
+                "Druid"
+            ),
+            React.createElement(
+                "option",
+                { value: "Fighter" },
+                "Fighter"
+            ),
+            React.createElement(
+                "option",
+                { value: "Monk" },
+                "Monk"
+            ),
+            React.createElement(
+                "option",
+                { value: "Paladin" },
+                "Paladin"
+            ),
+            React.createElement(
+                "option",
+                { value: "Ranger" },
+                "Ranger"
+            ),
+            React.createElement(
+                "option",
+                { value: "Rogue" },
+                "Rogue"
+            ),
+            React.createElement(
+                "option",
+                { value: "Sorcerer" },
+                "Sorcerer"
+            ),
+            React.createElement(
+                "option",
+                { value: "Warlock" },
+                "Warlock"
+            ),
+            React.createElement(
+                "option",
+                { value: "Wizard" },
+                "Wizard"
+            )
+        ),
         React.createElement("input", { type: "hidden", name: "_csrf", value: this.props.csrf }),
-        React.createElement("input", { className: "makeDomoSubmit", type: "submit", value: "Make Domo" })
+        React.createElement("input", { className: "makeCharacterSubmit", type: "submit", value: "Make Character" })
     );
-}; // NEWLY ADDED PLUS ^
+};
 
-
-var renderDomoList = function renderDomoList() {
+var renderCharacterList = function renderCharacterList() {
     if (this.state.data.length === 0) {
         return React.createElement(
             "div",
-            { className: "domoList" },
+            { className: "characterList" },
             React.createElement(
                 "h3",
-                { className: "emptyDomo" },
-                "No Domos yet"
+                { className: "emptyCharacter" },
+                "No Characters yet"
             )
         );
     }
-
-    var domoNodes = this.state.data.map(function (domo) {
-        return (
-            //<div key={domo._id} className="domo" method="POST">
+    //onSubmit={() => {this.handleSubmit(character._id);}
+    var characterNodes = this.state.data.map(function (character) {
+        return React.createElement(
+            "div",
+            { key: character._id,
+                className: "character", name: "character",
+                method: "POST", action: "/deleteCharacter"
+            },
             React.createElement(
-                "div",
-                { key: domo._id, className: "domo" },
-                React.createElement("img", { src: "/assets/img/domoface.jpeg", alt: "domo face", className: "domoFace" }),
-                React.createElement(
-                    "h3",
-                    { className: "domoName" },
-                    " Name: ",
-                    domo.name,
-                    " "
-                ),
-                React.createElement(
-                    "h3",
-                    { className: "domoAge" },
-                    " Age: ",
-                    domo.age,
-                    " "
-                ),
-                React.createElement(
-                    "h3",
-                    { className: "domoJob" },
-                    " Job: ",
-                    domo.job,
-                    " "
-                ),
-                React.createElement(
-                    "h3",
-                    { className: "domoLevel" },
-                    " Level: ",
-                    domo.level = 1,
-                    " "
-                ),
-                React.createElement("input", { type: "hidden", name: "_id", value: domo._id }),
-                React.createElement("input", { className: "makeDomoLevel", type: "submit", value: "Level-Up Domo" })
-            )
+                "h3",
+                { className: "characterName" },
+                " Name: ",
+                character.name,
+                " "
+            ),
+            React.createElement(
+                "h3",
+                { className: "characterJob" },
+                " Job: ",
+                character.job,
+                " "
+            ),
+            React.createElement(
+                "h3",
+                { className: "characterLevel" },
+                " Level: ",
+                character.level = 1,
+                " "
+            ),
+            React.createElement("input", { type: "hidden", name: "_id", value: character._id }),
+            React.createElement("input", { className: "makeCharacterLevel", type: "submit", value: "Level-Up Character(Not Working)" }),
+            React.createElement("input", { className: "deleteCharacter", type: "submit", value: "Delete Character(Not Working)" })
         );
-    }); // NEWLY ADDED ^ className="domoJob">  className="domoLevel"> Pt1.
+    });
 
     return React.createElement(
         "div",
-        { className: "domoList" },
-        domoNodes
+        { className: "characterList" },
+        characterNodes
     );
 };
 
 var setup = function setup(csrf) {
-    DomoFormClass = React.createClass({
-        displayName: "DomoFormClass",
+    CharacterFormClass = React.createClass({
+        displayName: "CharacterFormClass",
 
-        handleSubmit: handleDomo,
-        render: renderDomo
+        handleSubmit: handleCharacter,
+        render: renderCharacter
     });
 
-    DomoListClass = React.createClass({
-        displayName: "DomoListClass",
+    CharacterListClass = React.createClass({
+        displayName: "CharacterListClass",
 
-        loadDomosFromServer: function loadDomosFromServer() {
-            sendAjax('GET', '/getDomos', null, function (data) {
-                this.setState({ data: data.domos });
+        loadCharactersFromServer: function loadCharactersFromServer() {
+            sendAjax('GET', '/getCharacters', null, function (data) {
+                this.setState({ data: data.characters });
             }.bind(this));
         },
         getInitialState: function getInitialState() {
             return { data: [] };
         },
         componentDidMount: function componentDidMount() {
-            this.loadDomosFromServer();
+            this.loadCharactersFromServer();
         },
-        render: renderDomoList
+        render: renderCharacterList
     });
 
-    domoForm = ReactDOM.render(React.createElement(DomoFormClass, { csrf: csrf }), document.querySelector("#makeDomo"));
+    characterForm = ReactDOM.render(React.createElement(CharacterFormClass, { csrf: csrf }), document.querySelector("#makeCharacter"));
 
-    domoRenderer = ReactDOM.render(React.createElement(DomoListClass, null), document.querySelector("#domos"));
+    characterRenderer = ReactDOM.render(React.createElement(CharacterListClass, null), document.querySelector("#characters"));
 };
 
 var getToken = function getToken() {
@@ -161,11 +210,11 @@ $(document).ready(function () {
 
 var handleError = function handleError(message) {
   $("#errorMessage").text(message);
-  $("#domoMessage").animate({ width: 'toggle' }, 350);
+  $("#characterMessage").animate({ width: 'toggle' }, 350);
 };
 
 var redirect = function redirect(response) {
-  $("#domoMessage").animate({ width: 'hide' }, 350);
+  $("#characterMessage").animate({ width: 'hide' }, 350);
   window.location = response.redirect;
 };
 
